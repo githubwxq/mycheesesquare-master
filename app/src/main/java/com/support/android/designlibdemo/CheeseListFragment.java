@@ -45,7 +45,12 @@ public class CheeseListFragment extends Fragment {
                 R.layout.fragment_cheese_list, container, false);
         setupRecyclerView(rv);
        // ButterKnife.bind(getActivity(),rv);
+        initView();
         return rv;
+    }
+
+    private void initView() {
+
     }
 
     private void setupRecyclerView(RecyclerView recyclerView) {
