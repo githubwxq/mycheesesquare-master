@@ -22,12 +22,9 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-
-import java.util.Random;
 
 public class CheeseDetailActivity extends AppCompatActivity {
 
@@ -37,7 +34,7 @@ public class CheeseDetailActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
-
+justForTest();
         Intent intent = getIntent();
         final String cheeseName = intent.getStringExtra(EXTRA_NAME);
 
@@ -50,6 +47,10 @@ public class CheeseDetailActivity extends AppCompatActivity {
         collapsingToolbar.setTitle(cheeseName);
 
         loadBackdrop();
+    }
+
+    private void justForTest() {
+
     }
 
     private void loadBackdrop() {
