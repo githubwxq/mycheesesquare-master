@@ -41,28 +41,29 @@ import java.util.List;
 import java.util.Random;
 
 public class CheeseListFragment extends Fragment {
-    RecyclerView rv=null;
-    SwipeRefreshLayout swipeRefreshLayout=null;
+    RecyclerView rv = null;
+    SwipeRefreshLayout swipeRefreshLayout = null;
     private MyHandler handler = new MyHandler();
+    SimpleStringRecyclerViewAdapter simpleStringRecyclerViewAdapter;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-       View view = inflater.inflate(
+        View view = inflater.inflate(
                 R.layout.fragment_cheese_list, container, false);
-        rv= (RecyclerView) view.findViewById(R.id.recyclerview);
-        swipeRefreshLayout= (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_widget);
+        rv = (RecyclerView) view.findViewById(R.id.recyclerview);
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_widget);
         setupRecyclerView(rv);
-       // ButterKnife.bind(getActivity(),rv);
+        // ButterKnife.bind(getActivity(),rv);
         initListener();
         return view;
     }
 
     private void initListener() {
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener(){
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 
             @Override
             public void onRefresh() {
-                Toast.makeText(getActivity(),"刷新中",Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), "刷新中", Toast.LENGTH_LONG).show();
                 new Thread(new Runnable() {//下拉触发的函数，这里是谁1s然后加入一个数据，然后更新界面
                     @Override
                     public void run() {
@@ -80,6 +81,7 @@ public class CheeseListFragment extends Fragment {
         });
 
     }
+
     class MyHandler extends Handler {
         @Override
 
@@ -100,9 +102,44 @@ public class CheeseListFragment extends Fragment {
     }
 
     private void setupRecyclerView(RecyclerView recyclerView) {
-        recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
-        recyclerView.setAdapter(new SimpleStringRecyclerViewAdapter(getActivity(),
-                getRandomSublist(Cheeses.sCheeseStrings, 30)));
+
+        final LinearLayoutManager layout = new LinearLayoutManager(recyclerView.getContext());
+        recyclerView.setLayoutManager(layout);
+         simpleStringRecyclerViewAdapter = new SimpleStringRecyclerViewAdapter(getActivity(),
+                getRandomSublist(Cheeses.sCheeseStrings, 30));
+
+        recyclerView.setAdapter(simpleStringRecyclerViewAdapter);
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+            }
+//加载更多模拟
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    int lastVisiblePosition = layout.findLastVisibleItemPosition();
+                    if (lastVisiblePosition >= layout.getItemCount() - 1) {
+
+                        System.out.println("====自动加载");
+                        List<String> dates=new ArrayList<String>();
+                        dates.add("zidongjiazai1");
+                        dates.add("zidongjiazai2");
+                        dates.add("zidongjiazai3");
+                        dates.add("zidongjiazai4");
+                        simpleStringRecyclerViewAdapter.addDates(dates);
+
+                    }
+
+
+                }
+
+            }
+        });
+
+
 
 
     }
@@ -123,6 +160,12 @@ public class CheeseListFragment extends Fragment {
         private int mBackground;
         private List<String> mValues;
 
+        public void addDates(List<String> dates){
+            mValues.addAll(dates);
+            notifyDataSetChanged();
+
+
+        }
         public static class ViewHolder extends RecyclerView.ViewHolder {
             public String mBoundString;
 
@@ -148,7 +191,7 @@ public class CheeseListFragment extends Fragment {
         }
 
         public SimpleStringRecyclerViewAdapter(Context context, List<String> items) {
-          context.getTheme().resolveAttribute(R.attr.selectableItemBackground, mTypedValue, true);
+            context.getTheme().resolveAttribute(R.attr.selectableItemBackground, mTypedValue, true);
             mBackground = mTypedValue.resourceId;
             mValues = items;
         }
@@ -187,5 +230,7 @@ public class CheeseListFragment extends Fragment {
         public int getItemCount() {
             return mValues.size();
         }
+
+
     }
 }
