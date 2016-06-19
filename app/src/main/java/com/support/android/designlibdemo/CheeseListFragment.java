@@ -19,8 +19,11 @@ package com.support.android.designlibdemo;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
@@ -29,6 +32,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
@@ -37,16 +41,58 @@ import java.util.List;
 import java.util.Random;
 
 public class CheeseListFragment extends Fragment {
-
+    RecyclerView rv=null;
+    SwipeRefreshLayout swipeRefreshLayout=null;
+    private MyHandler handler = new MyHandler();
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        RecyclerView rv = (RecyclerView) inflater.inflate(
+       View view = inflater.inflate(
                 R.layout.fragment_cheese_list, container, false);
+        rv= (RecyclerView) view.findViewById(R.id.recyclerview);
+        swipeRefreshLayout= (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_widget);
         setupRecyclerView(rv);
        // ButterKnife.bind(getActivity(),rv);
-        initView();
-        return rv;
+        initListener();
+        return view;
+    }
+
+    private void initListener() {
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener(){
+
+            @Override
+            public void onRefresh() {
+                Toast.makeText(getActivity(),"刷新中",Toast.LENGTH_LONG).show();
+                new Thread(new Runnable() {//下拉触发的函数，这里是谁1s然后加入一个数据，然后更新界面
+                    @Override
+                    public void run() {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        //datas.add(0,"item:refresh...");
+                        handler.sendEmptyMessage(0);
+                    }
+                }).start();
+
+            }
+        });
+
+    }
+    class MyHandler extends Handler {
+        @Override
+
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 0:
+                    swipeRefreshLayout.setRefreshing(false);
+                    //adapter.notifyDataSetChanged();
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
     private void initView() {
