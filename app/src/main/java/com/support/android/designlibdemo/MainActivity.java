@@ -40,6 +40,8 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import widget.MyDialog;
+
 /**
  * TODO
  */
@@ -79,6 +81,10 @@ public class MainActivity extends AppCompatActivity {
 
                 Snackbar.make(view, "Here's a Snackbar", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+                new MyDialog(MainActivity.this)
+                        .showDialog(R.layout.dialog_layout, 50, 50);
+
+
             }
         });
 
