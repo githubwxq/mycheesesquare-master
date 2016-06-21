@@ -56,7 +56,7 @@ public class TestReflshListviewFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_test_reflsh_listview, container, false);
-       // initView(view);
+       initView(view);
         return view;
     }
 
@@ -69,26 +69,37 @@ public class TestReflshListviewFragment extends Fragment {
             @Override
             public void onRefresh() {
 
-                //刷新数据
 
-                refreshLayout.finishPullRefresh();
 
+                refreshLayout.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        refreshLayout.finishPullRefresh();
+                    }
+                }, 1000);
             }
 
             @Override
             public void onLoadMore() {
 
-                //加载数据
 
 
-                refreshLayout.finishPullLoad();
+                refreshLayout.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        refreshLayout.finishPullLoad();
+                    }
+                }, 2000);
 
             }
         });
 
          rvTest= (RecyclerView) view.findViewById(R.id.rv_test);
-
-        rvTest.setAdapter( new TestRecyclerAdapter(getActivity()));
+        DividerLine dividerLine = new DividerLine(DividerLine.VERTICAL);
+        dividerLine.setSize(1);
+        dividerLine.setColor(0xFFDDDDDD);
+        rvTest.addItemDecoration(dividerLine);
+         rvTest.setAdapter( new TestRecyclerAdapter(getActivity()));
 
 
 
@@ -120,8 +131,9 @@ public class TestReflshListviewFragment extends Fragment {
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = mInflater.inflate(R.layout.item_recycler_layout, parent, false);
-            //view.setBackgroundColor(Color.RED);
+        //    view.setBackgroundColor(Color.RED);
             ViewHolder viewHolder = new ViewHolder(view);
+
             return viewHolder;
         }
 
@@ -161,12 +173,7 @@ public class TestReflshListviewFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
+
     }
 
     @Override
