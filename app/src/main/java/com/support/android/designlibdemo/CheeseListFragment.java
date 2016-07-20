@@ -140,8 +140,6 @@ public class CheeseListFragment extends Fragment {
         });
 
 
-
-
     }
 
     private List<String> getRandomSublist(String[] array, int amount) {

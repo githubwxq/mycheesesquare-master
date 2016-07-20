@@ -9,8 +9,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.xlf.nrl.NsRefreshLayout;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -96,11 +100,23 @@ public class TestReflshListviewFragment extends Fragment {
 
          rvTest= (RecyclerView) view.findViewById(R.id.rv_test);
         DividerLine dividerLine = new DividerLine(DividerLine.VERTICAL);
-        dividerLine.setSize(1);
-        dividerLine.setColor(0xFFDDDDDD);
+        dividerLine.setSize(10);
+        dividerLine.setColor(0x990033);
         rvTest.addItemDecoration(dividerLine);
-         rvTest.setAdapter( new TestRecyclerAdapter(getActivity()));
+      //  rvTest.setItemAnimator(new DefaultItemAnimator());
+        MyItemAnimator animator = new MyItemAnimator(getActivity());
+        animator.setAddDuration(1500);
+        animator.setRemoveDuration(2000);
+        rvTest.setItemAnimator(animator);
 
+
+         rvTest.setAdapter( new TestRecyclerAdapter(getActivity()));
+        rvTest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getActivity(), "recycleview", Toast.LENGTH_SHORT).show();
+            }
+        });
 
 
 
@@ -110,14 +126,14 @@ public class TestReflshListviewFragment extends Fragment {
 
     public class TestRecyclerAdapter extends RecyclerView.Adapter<TestRecyclerAdapter.ViewHolder> {
         private LayoutInflater mInflater;
-        private String[] mTitles = null;
+        private List<String> mTitles = null;
 
         public TestRecyclerAdapter(Context context) {
             this.mInflater = LayoutInflater.from(context);
-            this.mTitles = new String[20];
+            this.mTitles = new ArrayList<>();
             for (int i = 0; i < 20; i++) {
                 int index = i + 1;
-                mTitles[i] = "item" + index;
+                mTitles.add("item" + index);
             }
         }
 
@@ -144,22 +160,36 @@ public class TestReflshListviewFragment extends Fragment {
          * @param position
          */
         @Override
-        public void onBindViewHolder(ViewHolder holder, int position) {
-            holder.item_tv.setText(mTitles[position]);
+        public void onBindViewHolder(final ViewHolder holder, final int position) {
+            holder.item_tv.setText(mTitles.get(position));
+            holder. item_tv2.setText("我的位置是"+position);
+            holder. item_tv2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    System.out.print(position+"");
+                   // Toast.makeText(getActivity(), position, Toast.LENGTH_SHORT).show();
+                   // holder. item_tv2.setText(position+"wxq");
+                    mTitles.remove(position );
+
+                    notifyDataSetChanged();
+
+                }
+            });
         }
 
         @Override
         public int getItemCount() {
-            return mTitles.length;
+            return mTitles.size();
         }
 
         //自定义的ViewHolder，持有每个Item的的所有界面元素
         public  class ViewHolder extends RecyclerView.ViewHolder {
             public TextView item_tv;
-
+            public TextView item_tv2;
             public ViewHolder(View view) {
                 super(view);
                 item_tv = (TextView) view.findViewById(R.id.item_tv);
+                item_tv2= (TextView) view.findViewById(R.id.item_tv2);
             }
         }
     }
